@@ -1,0 +1,61 @@
+// Ce fichier contient le schéma Prisma, pour en savoir plus : https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Modèle représentant un utilisateur
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  password      String
+  firstName     String
+  lastName      String
+  birthdate     DateTime?
+  position      String?
+  location      String?
+  posts         Post[]    @relation("AuthorPosts")
+  comments      Comment[] @relation("AuthorComments")
+  likedPosts    Post[]    @relation("LikedPosts")
+  likedComments Comment[] @relation("LikedComments")
+  isAdmin       Boolean   @default(false)
+}
+
+// Modèle représentant un post
+model Post {
+  id        String    @id @default(cuid())
+  content   String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  author    User      @relation("AuthorPosts", fields: [authorId], references: [id])
+  authorId  String
+  likes     User[]    @relation("LikedPosts")
+  comments  Comment[]
+  images    Image[]
+}
+
+// Modèle représentant une image
+model Image {
+  id     String @id @default(cuid())
+  url    String
+  post   Post   @relation(fields: [postId], references: [id])
+  postId String
+}
+
+// Modèle représentant un commentaire
+model Comment {
+  id        String   @id @default(cuid())
+  content   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  author    User     @relation("AuthorComments", fields: [authorId], references: [id])
+  authorId  String
+  post      Post     @relation(fields: [postId], references: [id])
+  postId    String
+  likes     User[]   @relation("LikedComments")
+}

@@ -1,0 +1,53 @@
+{
+  "info": {
+    "_postman_id": "1c7c9de9-63c7-4a57-8e8b-72681b66df7d",
+    "name": "Auth API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Login",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"email\": \"john.doe@example.com\",\n    \"password\": \"password\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:3000/auth/login",
+          "host": [
+            "http://localhost:3000"
+          ],
+          "path": [
+            "auth",
+            "login"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Signup",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"email\": \"jane.doe@example.com\",\n    \"password\": \"password\",\n    \"firstName\": \"Jane\",\n    \"lastName\": \"Doe\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:3000/auth/signup",
+          "host": [
+            "http://localhost:3000"
+          ],
+          "path": [
+            "auth",
+            "signup"
+          ]
+        }
+      },
+      "response": []
+    }
+  ]
+}

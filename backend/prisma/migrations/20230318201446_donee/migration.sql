@@ -1,0 +1,4 @@
+-- AlterTable
+ALTER TABLE "User" ALTER COLUMN "birthdate" DROP NOT NULL,
+ALTER COLUMN "position" DROP NOT NULL,
+ALTER COLUMN "location" DROP NOT NULL;

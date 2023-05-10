@@ -1,0 +1,52 @@
+{
+  "info": {
+    "_postman_id": "be9e3e8a-4e20-4861-83ee-df460cd7cf8d",
+    "name": "Like API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Toggle like on post",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{jwt_token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/like/post/:id",
+          "host": ["{{base_url}}"],
+          "path": ["like", "post", ":id"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Toggle like on comment",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{jwt_token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/like/comment/:id",
+          "host": ["{{base_url}}"],
+          "path": ["like", "comment", ":id"]
+        }
+      },
+      "response": []
+    }
+  ],
+  "protocolProfileBehavior": {},
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:3000"
+    }
+  ]
+}
