@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import AuthService from '../services/AuthService';
 import {
     Container,
@@ -10,8 +10,9 @@ import {
     Button,
     Typography,
 } from '@mui/material';
-import { makeStyles } from '@mui/styles';
-import { useAuth } from "../components/AuthContext";
+import {makeStyles} from '@mui/styles';
+import {useAuth} from "../components/AuthContext";
+import {useNavigate} from 'react-router-dom';
 
 const useStyles = makeStyles({
     container: {
@@ -26,35 +27,39 @@ const useStyles = makeStyles({
 });
 
 const LoginForm: React.FC = () => {
+
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
+    const navigate = useNavigate();
 
     const handleLogin = async (event: React.FormEvent) => {
-  event.preventDefault();
-  try {
-    const response = await AuthService.login({
-      email,
-      password,
-    });
-    localStorage.setItem('token', response.token);
 
-  } catch (error) {
-    if (error) {
-        setErrorMessage("Email ou mot de passe incorrect.");
-    } else {
-        setErrorMessage("Une erreur est survenue lors de la tentative de connexion. Veuillez réessayer plus tard.");
-    }
-  }
+        event.preventDefault();
+        try {
+            const response = await AuthService.login({
+                email,
+                password,
+            });
+            localStorage.setItem('token', response.token);
+            navigate('/');
+
+        } catch (error) {
+            if (error) {
+                setErrorMessage("Email ou mot de passe incorrect.");
+            } else {
+                setErrorMessage("Une erreur est survenue lors de la tentative de connexion. Veuillez réessayer plus tard.");
+            }
+        }
     };
 
     return (
         <form onSubmit={handleLogin}>
             {errorMessage && (
-                <Typography color="error" style={{ marginBottom: '1rem' }}>
+                <Typography color="error" style={{marginBottom: '1rem'}}>
                     {errorMessage}
                 </Typography>
-                )}
+            )}
             <TextField
                 label="Email"
                 type="email"
@@ -68,14 +73,14 @@ const LoginForm: React.FC = () => {
                 type="password"
                 variant="outlined"
                 fullWidth
-                style={{ marginTop: '1rem' }}
+                style={{marginTop: '1rem'}}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
             />
             <Button
                 variant="contained"
                 color="primary"
-                style={{ marginTop: '1rem' }}
+                style={{marginTop: '1rem'}}
                 fullWidth
                 type="submit"
             >
@@ -96,10 +101,12 @@ const SignupForm: React.FC = () => {
     const [location, setLocation] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
 
-    const { login } = useAuth();
+    const {login} = useAuth();
+    const navigate = useNavigate();
 
     const handleSignup = async (event: React.FormEvent) => {
         event.preventDefault();
+
         if (password !== confirmPassword) {
             setErrorMessage('Les mots de passe ne correspondent pas.');
             return;
@@ -122,16 +129,18 @@ const SignupForm: React.FC = () => {
             });
 
             login(response.token, response.user);
+            navigate('/');
 
-        } catch (error) {
-            setErrorMessage('Une erreur est survenue lors de l\'inscription. Veuillez réessayer.');
+        } catch (error: any) {
+            const serverErrorMessage = error.response?.data?.message || 'Une erreur est survenue lors de l\'inscription. Veuillez réessayer.';
+            setErrorMessage(serverErrorMessage);
         }
     };
 
     return (
         <form onSubmit={handleSignup}>
             {errorMessage && (
-                <Typography color="error" style={{ marginBottom: '1rem' }}>
+                <Typography color="error" style={{marginBottom: '1rem'}}>
                     {errorMessage}
                 </Typography>
             )}
@@ -142,7 +151,7 @@ const SignupForm: React.FC = () => {
                 fullWidth
                 value={firstName}
                 onChange={(e) => setFirstName(e.target.value)}
-                style={{ marginTop: '1rem' }}
+                style={{marginTop: '1rem'}}
                 required
             />
             <TextField
@@ -152,7 +161,7 @@ const SignupForm: React.FC = () => {
                 fullWidth
                 value={lastName}
                 onChange={(e) => setLastName(e.target.value)}
-                style={{ marginTop: '1rem' }}
+                style={{marginTop: '1rem'}}
                 required
             />
             <TextField
@@ -162,7 +171,7 @@ const SignupForm: React.FC = () => {
                 fullWidth
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                style={{ marginTop: '1rem' }}
+                style={{marginTop: '1rem'}}
                 required
             />
             <TextField
@@ -172,7 +181,7 @@ const SignupForm: React.FC = () => {
                 fullWidth
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                style={{ marginTop: '1rem' }}
+                style={{marginTop: '1rem'}}
                 required
             />
             <TextField
@@ -182,7 +191,7 @@ const SignupForm: React.FC = () => {
                 fullWidth
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
-                style={{ marginTop: '1rem' }}
+                style={{marginTop: '1rem'}}
                 required
             />
             <TextField
@@ -192,7 +201,7 @@ const SignupForm: React.FC = () => {
                 fullWidth
                 value={birthdate}
                 onChange={(e) => setBirthdate(e.target.value)}
-                style={{ marginTop: '1rem' }}
+                style={{marginTop: '1rem'}}
                 InputLabelProps={{
                     shrink: true,
                 }}
@@ -204,7 +213,7 @@ const SignupForm: React.FC = () => {
                 fullWidth
                 value={position}
                 onChange={(e) => setPosition(e.target.value)}
-                style={{ marginTop: '1rem' }}
+                style={{marginTop: '1rem'}}
             />
             <TextField
                 label="Location"
@@ -213,19 +222,19 @@ const SignupForm: React.FC = () => {
                 fullWidth
                 value={location}
                 onChange={(e) => setLocation(e.target.value)}
-                style={{ marginTop: '1rem' }}
+                style={{marginTop: '1rem'}}
             />
             <Button
                 type="submit"
                 variant="contained"
                 color="primary"
-                style={{ marginTop: '1rem' }}
+                style={{marginTop: '1rem'}}
                 fullWidth
-                >
+            >
                 Signup
             </Button>
         </form>
-        );
+    );
 };
 
 const LoginPage: React.FC = () => {
@@ -247,13 +256,13 @@ const LoginPage: React.FC = () => {
                     aria-label="login and signup tabs"
                     variant="fullWidth"
                 >
-                    <Tab label="Login" />
-                    <Tab label="Signup" />
+                    <Tab label="Login"/>
+                    <Tab label="Signup"/>
                 </Tabs>
             </Paper>
             <Paper className={classes.form}>
                 <Grid container direction="column" spacing={2}>
-                    {activeTab === 0 ? <LoginForm /> : <SignupForm />}
+                    {activeTab === 0 ? <LoginForm/> : <SignupForm/>}
                 </Grid>
             </Paper>
         </Container>

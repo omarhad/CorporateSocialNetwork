@@ -1,9 +1,15 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  InternalServerErrorException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { LoginDto } from './dto/login.dto';
 import { SignupDto } from './dto/signup.dto';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { PrismaService } from '../../prisma/prisma.service';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class AuthService {
@@ -38,27 +44,41 @@ export class AuthService {
       location,
       isAdmin,
     } = signupData;
-    const hashedPassword = await this.hashPassword(password);
 
-    const userData = {
-      email,
-      password: hashedPassword,
-      firstName,
-      lastName,
-      ...(birthdate ? { birthdate: new Date(birthdate) } : {}),
-      ...(position ? { position } : {}),
-      ...(location ? { location } : {}),
-      ...{ isAdmin: !!isAdmin },
-    };
+    // Vérifier la force du mot de passe, la validité de l'e-mail, etc. avant de continuer
 
-    const newUser = await this.prisma.user.create({
-      data: userData,
-    });
+    try {
+      const hashedPassword = await this.hashPassword(password);
 
-    const payload = { userId: newUser.id };
-    const token = this.jwtService.sign(payload);
+      const userData = {
+        email,
+        password: hashedPassword,
+        firstName,
+        lastName,
+        ...(birthdate ? { birthdate: new Date(birthdate) } : {}),
+        ...(position ? { position } : {}),
+        ...(location ? { location } : {}),
+        ...{ isAdmin: !!isAdmin },
+      };
 
-    return { user: newUser, token };
+      const newUser = await this.prisma.user.create({
+        data: userData,
+      });
+
+      const payload = { userId: newUser.id };
+      const token = this.jwtService.sign(payload);
+
+      return { user: newUser, token };
+    } catch (error) {
+      if (
+        error instanceof Prisma.PrismaClientKnownRequestError &&
+        error.code === 'P2002'
+      ) {
+        throw new ConflictException(`Email ${email} already exists.`);
+      } else {
+        throw new InternalServerErrorException('Something went wrong.');
+      }
+    }
   }
 
   private async hashPassword(password: string): Promise<string> {
