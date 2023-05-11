@@ -7,7 +7,6 @@ import NavBar from "./components/NavBar";
 import { ThemeProvider } from '@mui/material/styles';
 import { AuthProvider } from './components/AuthContext';
 import LoginPage from './pages/LoginPage';
-import PrivateRoute from './components/PrivateRoute';
 import theme from "./config/theme";
 
 const App: React.FC = () => {
@@ -18,18 +17,16 @@ const App: React.FC = () => {
                     <div className="App">
                         <NavBar />
                         <Routes>
-                            <React.Fragment>
-                                <PrivateRoute path="/" render={() => <Home />} />
-                                <PrivateRoute path="/profile" render={() => <Profile />} />
-                                <PrivateRoute path="/users" render={() => <UserList />} />
-                            </React.Fragment>
+                            <Route path="/" element={<Home />} />
+                            <Route path="/profile" element={<Profile />} />
+                            <Route path="/users" element={<UserList />} />
                             <Route path="/login" element={<LoginPage />} />
                         </Routes>
                     </div>
                 </Router>
             </AuthProvider>
         </ThemeProvider>
-    );
+        );
 };
 
 export default App;
